@@ -13,7 +13,11 @@ info: Omit the types for local variables. (omit_local_variable_types at [compone
 
 
 Usage:
+```
   go run dart_analyzer_auto_fix.go "<root path to project>"  <analyzer_output file>  <name of rule to fix>
+```
 
 Example:
+```
   go run dart_analyzer_auto_fix.go "d:\projects\components\\" analyzer_output.txt   omit_local_variable_types
+```
