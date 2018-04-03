@@ -85,6 +85,32 @@ func write_all_lines(file string, lines *[]string){
       w.Flush()    
 }
 
+func insert(lines []string, index int, str string) []string {
+    lines = append(lines, "")
+    
+    if index < len(lines) {
+        for i := len(lines)-1; i > index; i-- {
+            lines[i] = lines[i-1]
+        }   
+    }    
+    lines[index] = str
+    return lines
+}
+
+
+func rule_annotate_overrides(lines []string, line int) (int, []string) {
+    line_before :=  lines[line]
+
+    pattern := regexp.MustCompile(`(^\s*)(\S+.*$)`)
+    match := pattern.FindStringSubmatch(line_before)
+    if (match != nil)  {
+        newline := match[1]+"@override"
+        insert(lines, line, newline)
+        return 1, lines
+    }                
+
+    return 0, lines
+}
 
 func rule_omit_local_variable_types(lines *[]string, line int) (int) {
     line_before :=  (*lines)[line]
@@ -162,6 +188,9 @@ func process_file(file string, infos []analyzer_info) int{
             nmodified = nmodified + rule_prefer_final_locals(&lines, line)
         case "omit_local_variable_types":
             nmodified = nmodified + rule_omit_local_variable_types(&lines, line)
+        case "annotate_overrides":
+            
+            nmodified, lines = nmodified + rule_annotate_overrides(lines, line)            
         }
     }
 
